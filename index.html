@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#244b3b">
+  <meta name="description" content="Gestion simple et locale de votre troupeau ovin.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Bergerie</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">🐑</div>
+      <div><div class="brand-name">Bergerie</div><div class="brand-sub">Gestion de troupeau</div></div>
+    </div>
+    <div class="top-actions">
+      <span id="offlineBadge" class="status"><i></i> Hors ligne prêt</span>
+      <button class="icon-btn" id="backupBtn" title="Sauvegarder" aria-label="Sauvegarder">⇧</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="dashboard" class="page active">
+      <div class="welcome">
+        <div><p class="eyebrow">VOTRE ÉLEVAGE</p><h1>Bonjour !</h1><p class="muted">Voici le suivi de votre troupeau.</p></div>
+        <div class="welcome-illustration">🌿</div>
+      </div>
+      <div class="stats-grid">
+        <article class="stat-card"><span class="stat-icon">🐑</span><span class="stat-label">Animaux enregistrés</span><strong id="statAnimals">0</strong></article>
+        <article class="stat-card"><span class="stat-icon">♀️</span><span class="stat-label">Brebis</span><strong id="statEwes">0</strong></article>
+        <article class="stat-card"><span class="stat-icon">🐏</span><span class="stat-label">Béliers</span><strong id="statRams">0</strong></article>
+        <article class="stat-card"><span class="stat-icon">🍼</span><span class="stat-label">Agneaux</span><strong id="statLambs">0</strong></article>
+      </div>
+      <div class="section-heading"><div><p class="eyebrow">ACCÈS RAPIDE</p><h2>Que souhaitez-vous faire ?</h2></div></div>
+      <div class="quick-grid">
+        <button class="quick-card" data-go="animals"><span>＋</span><b>Ajouter un animal</b><small>Créer une fiche individuelle</small></button>
+        <button class="quick-card" data-go="lots"><span>♧</span><b>Créer un lot de lutte</b><small>Associer un bélier et des brebis</small></button>
+        <button class="quick-card" data-go="lambings"><span>♡</span><b>Enregistrer un agnelage</b><small>Suivre les naissances</small></button>
+      </div>
+      <div class="section-heading"><div><p class="eyebrow">SUIVI</p><h2>Derniers agnelages</h2></div><button class="text-btn" data-go="lambings">Tout voir →</button></div>
+      <div id="recentLambings" class="list-card empty">Aucun agnelage enregistré pour le moment.</div>
+      <div class="privacy-note">🔒 Vos données restent sur cet appareil. Pensez à faire une sauvegarde régulière.</div>
+    </section>
+
+    <section id="animals" class="page">
+      <div class="page-head"><div><p class="eyebrow">CHEPTEL</p><h1>Animaux</h1><p class="muted">Les fiches individuelles de votre troupeau.</p></div><button class="primary-btn" id="addAnimalBtn">＋ Ajouter</button></div>
+      <div class="toolbar"><input id="animalSearch" type="search" placeholder="Rechercher un numéro, une boucle…"><select id="animalFilter"><option value="all">Tous les animaux</option><option value="ewe">Brebis</option><option value="ram">Béliers</option><option value="lamb">Agneaux</option></select></div>
+      <div id="animalList" class="record-list"></div>
+    </section>
+
+    <section id="lots" class="page">
+      <div class="page-head"><div><p class="eyebrow">REPRODUCTION</p><h1>Lots de lutte</h1><p class="muted">Suivez les périodes de mise à la reproduction.</p></div><button class="primary-btn" id="addLotBtn">＋ Créer un lot</button></div>
+      <div id="lotList" class="record-list"></div>
+    </section>
+
+    <section id="lambings" class="page">
+      <div class="page-head"><div><p class="eyebrow">NAISSANCES</p><h1>Agnelages</h1><p class="muted">Enregistrez les mises bas et leurs résultats.</p></div><button class="primary-btn" id="addLambingBtn">＋ Ajouter</button></div>
+      <div id="lambingList" class="record-list"></div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="page-head"><div><p class="eyebrow">DONNÉES & APPLICATION</p><h1>Paramètres</h1><p class="muted">Vos données sont enregistrées sur cet appareil.</p></div></div>
+      <div class="settings-card">
+        <h3>💾 Sauvegarde et restauration</h3>
+        <p>Exportez toutes vos données dans un fichier de sauvegarde. Gardez-le ailleurs que sur votre téléphone.</p>
+        <button class="primary-btn full" id="exportBtn">Télécharger une sauvegarde</button>
+        <label class="secondary-btn full file-label">Restaurer une sauvegarde<input id="importFile" type="file" accept="application/json,.json"></label>
+        <p class="small muted">La restauration remplace les données actuellement présentes sur cet appareil.</p>
+      </div>
+      <div class="settings-card">
+        <h3>📱 Installation</h3>
+        <p>Une fois Bergerie publiée sur une adresse sécurisée, ouvrez cette adresse dans Chrome puis choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».</p>
+        <p class="small muted">La première ouverture doit se faire avec une connexion internet. Ensuite, l'application peut fonctionner hors connexion.</p>
+      </div>
+      <div class="settings-card danger-zone">
+        <h3>Réinitialiser Bergerie</h3>
+        <p>Supprime définitivement les animaux, lots et agnelages de cet appareil.</p>
+        <button class="danger-btn" id="resetBtn">Effacer toutes les données</button>
+      </div>
+      <p class="version">Bergerie · prototype local v1.0</p>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-page="dashboard"><span>⌂</span><small>Accueil</small></button>
+    <button class="nav-item" data-page="animals"><span>🐑</span><small>Animaux</small></button>
+    <button class="nav-item" data-page="lots"><span>♧</span><small>Lutte</small></button>
+    <button class="nav-item" data-page="lambings"><span>♡</span><small>Agnelages</small></button>
+    <button class="nav-item" data-page="settings"><span>⚙</span><small>Plus</small></button>
+  </nav>
+
+  <dialog id="animalDialog" class="modal">
+    <form id="animalForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">FICHE INDIVIDUELLE</p><h2 id="animalDialogTitle">Nouvel animal</h2></div><button type="button" class="close-btn" data-close="animalDialog">×</button></div>
+      <input type="hidden" id="animalId">
+      <label>Type d'animal<select id="animalType" required><option value="ewe">Brebis</option><option value="ram">Bélier</option><option value="lamb">Agneau</option></select></label>
+      <label>Numéro de boucle visuelle<input id="visualId" placeholder="Ex. 1245" required></label>
+      <label>Identifiant électronique RFID <span class="optional">facultatif</span><input id="rfidId" placeholder="Saisir le numéro RFID"></label>
+      <div class="form-row"><label>Sexe<select id="animalSex"><option value="">Non précisé</option><option value="F">Femelle</option><option value="M">Mâle</option></select></label><label>Date de naissance<input id="animalBirth" type="date"></label></div>
+      <label>Mère <span class="optional">facultatif</span><select id="animalMother"><option value="">Non renseignée</option></select></label>
+      <label>Notes <span class="optional">facultatif</span><textarea id="animalNotes" rows="2" placeholder="Informations complémentaires…"></textarea></label>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close="animalDialog">Annuler</button><button type="submit" class="primary-btn">Enregistrer</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="lotDialog" class="modal">
+    <form id="lotForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">REPRODUCTION</p><h2 id="lotDialogTitle">Nouveau lot de lutte</h2></div><button type="button" class="close-btn" data-close="lotDialog">×</button></div>
+      <input type="hidden" id="lotId">
+      <label>Nom du lot<input id="lotName" placeholder="Ex. Lot printemps 2026" required></label>
+      <label>Bélier<select id="lotRam" required></select></label>
+      <div class="form-row"><label>Date de début<input id="lotStart" type="date" required></label><label>Date de retrait du bélier<input id="lotEnd" type="date"></label></div>
+      <div class="check-head"><b>Brebis du lot</b><span id="selectedEweCount" class="muted small">0 sélectionnée</span></div>
+      <input id="eweSearch" class="compact-search" placeholder="Filtrer les brebis…">
+      <div id="eweChoices" class="choice-list"></div>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close="lotDialog">Annuler</button><button type="submit" class="primary-btn">Enregistrer le lot</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="lambingDialog" class="modal">
+    <form id="lambingForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">NAISSANCE</p><h2 id="lambingDialogTitle">Nouvel agnelage</h2></div><button type="button" class="close-btn" data-close="lambingDialog">×</button></div>
+      <input type="hidden" id="lambingId">
+      <label>Brebis<select id="lambingEwe" required></select></label>
+      <label>Date de l'agnelage<input id="lambingDate" type="date" required></label>
+      <div class="form-row"><label>Nombre total de nés<input id="bornTotal" type="number" min="0" value="1" required></label><label>Nés vivants<input id="bornAlive" type="number" min="0" value="1" required></label></div>
+      <div class="form-row"><label>Nés morts<input id="bornDead" type="number" min="0" value="0" required></label><label>Avec assistance ?<select id="lambingAssisted"><option value="no">Non</option><option value="yes">Oui</option></select></label></div>
+      <label>Notes <span class="optional">facultatif</span><textarea id="lambingNotes" rows="2" placeholder="Détails utiles…"></textarea></label>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close="lambingDialog">Annuler</button><button type="submit" class="primary-btn">Enregistrer</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
